@@ -1,11 +1,5 @@
-# numar de cuvinte **********************************************************************
-# numar de propozitii
-# numar de numere de telefoane unice ****************************************************
-# numar de CNP-uri unice ****************************************************************
-# statistica pe fiecare litera, insensitive -> numarul si procentul din total ***********
-
-
 import re
+from nltk.tokenize import sent_tokenize
 
 
 def readData():
@@ -22,11 +16,10 @@ def analyze():
     statistics = {"words" : 0, "sentences" : 0,
                   "phone numbers" : 0, "CNP" : 0}
 
-    # sentences = re.split('\?|\.|\!', text)
-    
-    #for i in sentences:
-    #    print (i)
-    #    print ("\n")
+    # Calcul pentru numarul de propozitii
+
+    listSentences = sent_tokenize(text)
+    statistics["sentences"] = len(listSentences)
 
     # Calcul pentru numarul de cuvinte
 
@@ -54,7 +47,7 @@ def analyze():
             listAux.append(phone)
 
     listPhones = listAux[:]
-    statistics["phone numbers"] = len(listPhones)
+    statistics["phone numbers"] = str(len(listPhones)) + " " + str(listPhones)
 
     # Calcul pentru numarul de CNP-uri unice
 
@@ -85,7 +78,7 @@ def analyze():
             listAux.append(cnp)
 
     listCNP = listAux[:]
-    statistics["CNP"] = len(listCNP)
+    statistics["CNP"] = str(len(listCNP)) + " " + str(listCNP)
 
     # Calcul pentru statistica pe litere, insensitive
 
@@ -106,29 +99,8 @@ def analyze():
     for pair in letters:
         statistics[pair[0]] = str(pair[1]) + " (" + str("%.3f" % ((100 * pair[1]) / numberOfLetters)) + "%)"
 
-    for pair in statistics.items():
-        print (pair)
-
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-    
-
-
-    
-
-
+    for key in statistics.keys():
+        print (str(key) + " : " + str(statistics[key]))
 
 
 
