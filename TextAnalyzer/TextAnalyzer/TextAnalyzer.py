@@ -1,5 +1,31 @@
 import re
-from nltk.tokenize import sent_tokenize
+# from nltk.tokenize import sent_tokenize
+alphabets = "([A-Za-z])"
+prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
+suffixes = "(Inc|Ltd|Jr|Sr|Co)"
+starters = "(Mr|Mrs|Ms|Dr|He|She|It|They|Their|Our|We|But|However|That|This|Wherever)"
+websites = "[.](com|net|org|io|gov)"
+digits = "([0-9])" 
+
+
+# Functie pentru maparea unui text, in vederea obtinerii textului sub forma de
+# propozitii
+def split_into_sentences(text):
+    text = re.sub(prefixes, "<prd>", text)
+    text = re.sub(websites, "<prd>", text)
+    if "Ph.D" in text: text = text.replace("Ph.D.", "Ph<prd>D<prd>")
+    text = re.sub(digits + "[.]", "<prd>", text)
+    text = re.sub(suffixes + "[.] " + starters, "<stop>", text)
+    text = re.sub(suffixes + "[.]", "<prd>", text)
+    text = re.sub(" " + alphabets + "[.]", "<prd>", text)
+    text = text.replace(".", "<stop>")
+    text = text.replace("?", "<stop>")
+    text = text.replace("!", "<stop>")
+    text = text.replace("<prd>", ".")
+    sentences = text.split("<stop>")
+    sentences = sentences[:-1]
+    sentences = [s.strip() for s in sentences]
+    return sentences
 
 
 def readData():
@@ -18,8 +44,12 @@ def analyze():
 
     # Calcul pentru numarul de propozitii
 
-    listSentences = sent_tokenize(text)
+    copyText = text[:]
+    listSentences = split_into_sentences(copyText)
     statistics["sentences"] = len(listSentences)
+
+    # listSentences = sent_tokenize(text)
+    # statistics["sentences"] = len(listSentences)
 
     # Calcul pentru numarul de cuvinte
 
@@ -100,7 +130,7 @@ def analyze():
         statistics[pair[0]] = str(pair[1]) + " (" + str("%.3f" % ((100 * pair[1]) / numberOfLetters)) + "%)"
 
     for key in statistics.keys():
-        print (str(key) + " : " + str(statistics[key]))
+        print(str(key) + " : " + str(statistics[key]))
 
 
 
